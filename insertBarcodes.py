@@ -174,7 +174,6 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
     letters = ["C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W",
                "X", "Y", "Z"]
 
-    missedClasses = []
     timeFound = False
     classNameFound = False
     x = 0
@@ -186,7 +185,7 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
         gridTimeCell = sheet[letters[x] + "6"]
         if time in str(gridTimeCell.value):
             #print("found time")
-            while not classNameFound:
+            while True:
                 classNameValue = sheet[letters[x] + str(classNameRow)]
                 if classNameValue.value is not None:
                     if not "Lifeguarding" in str(classNameValue.value):
@@ -195,10 +194,8 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
                             if lowRatio:
                                 if "LR" in str(classNameValue.value):
                                     sheet[letters[x] + str(activityNumberRow)].value = activityNumber
-                                    classNameFound = True
                             else:
                                 sheet[letters[x] + str(activityNumberRow)].value = activityNumber
-                                classNameFound = True
                             print("Found class - Entering barcode for: " + level + " - " + activityNumber)
                             return True
 
@@ -206,7 +203,6 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
                 activityNumberRow += 2
                 if classNameRow > 200 or activityNumberRow > 200:
                     print("not found class")
-                    classNameFound = True
                     return False
             timeFound = True
 

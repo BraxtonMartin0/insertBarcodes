@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7b25e19c-da68-4be5-b22b-a0a3ebb0a858" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/2024 WBSC Grids - Winter.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/2024 WBSC Grids - Winter.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/active_report.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/active_report.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insertBarcodes.py" beforeDir="false" afterPath="$PROJECT_DIR$/insertBarcodes.py" afterDir="false" />
-    </list>
+    <list default="true" id="7b25e19c-da68-4be5-b22b-a0a3ebb0a858" name="Changes" comment="Working version (no special classes)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -35,7 +29,7 @@
     &quot;Python.insertBarcodes.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;fixing__bugs&quot;
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;
   }
 }</component>
   <component name="RunManager" selected="Python.insertBarcodes">
@@ -98,6 +92,15 @@
       <option name="presentableId" value="Default" />
       <updated>1707156635890</updated>
     </task>
+    <task id="LOCAL-00001" summary="Working version (no special classes)">
+      <option name="closed" value="true" />
+      <created>1707549997484</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1707549997484</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -122,6 +125,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Working version (no special classes)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working version (no special classes)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
