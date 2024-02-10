@@ -41,7 +41,7 @@ def insertBarcodes(file, gridsFile):
         else:
             lowRatio = False
 
-        print(level)
+        #print(level)
         day_cell = "D" + str(x)
         day = data[day_cell].value
 
@@ -69,58 +69,145 @@ def insertBarcodes(file, gridsFile):
 
     wb.save(file)
 
+    missingClasses = []
+
     for swimmingClass in allClasses:
         gridsWb = load_workbook(gridsFile)
+
         if swimmingClass.PM and not int(swimmingClass.hour) == 12:
             classTime = str(int(swimmingClass.hour) + 12) + ":" + str(swimmingClass.minute) + ":" + "00"
         else:
             classTime = str(swimmingClass.hour) + ":" + str(swimmingClass.minute)
-        if swimmingClass.day == "M":
-            if int(swimmingClass.hour) > 3 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
+
+        if swimmingClass.day == "Sa":
+            grid = gridsWb["Saturday AM"]
+            daytime = False
+            if not (gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber,
+                        swimmingClass.lowRatio,
+                        daytime)):
+                missingClasses.append(swimmingClass)
+            gridsWb.save(gridsFile)
+        elif swimmingClass.day == "Su":
+            grid = gridsWb["Sunday AM"]
+            daytime = False
+            if not (gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber,
+                               swimmingClass.lowRatio,
+                               daytime)):
+                missingClasses.append(swimmingClass)
+            gridsWb.save(gridsFile)
+        elif swimmingClass.day == "M":
+            if int(swimmingClass.hour) > 1 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
                 grid = gridsWb["Monday PM"]
                 daytime = False
-                gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber, swimmingClass.lowRatio,
-                           daytime)
-
+                if not (gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber,
+                                   swimmingClass.lowRatio,
+                                   daytime)):
+                    missingClasses.append(swimmingClass)
+                gridsWb.save(gridsFile)
             else:
                 grid = gridsWb["Daytime"]
                 daytime = True
+
+        elif swimmingClass.day == "Tu":
+            if int(swimmingClass.hour) > 3 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
+                grid = gridsWb["Tuesday PM"]
+                daytime = False
+                if not (gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber,
+                                   swimmingClass.lowRatio,
+                                   daytime)):
+                    missingClasses.append(swimmingClass)
+                gridsWb.save(gridsFile)
+            else:
+                grid = gridsWb["Daytime"]
+                daytime = True
+
+        elif swimmingClass.day == "W":
+            if int(swimmingClass.hour) > 3 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
+                grid = gridsWb["Wednesday PM"]
+                daytime = False
+                if not (gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber,
+                                   swimmingClass.lowRatio,
+                                   daytime)):
+                    missingClasses.append(swimmingClass)
+                gridsWb.save(gridsFile)
+            else:
+                grid = gridsWb["Daytime"]
+                daytime = True
+
+        elif swimmingClass.day == "Th":
+            if int(swimmingClass.hour) > 3 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
+                grid = gridsWb["Thursday PM"]
+                daytime = False
+                if not (gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber,
+                                   swimmingClass.lowRatio,
+                                   daytime)):
+                    missingClasses.append(swimmingClass)
+                gridsWb.save(gridsFile)
+            else:
+                grid = gridsWb["Daytime"]
+                daytime = True
+
+        elif swimmingClass.day == "F":
+            if int(swimmingClass.hour) > 3 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
+                grid = gridsWb["Friday PM"]
+                daytime = False
+                if not (gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber,
+                                   swimmingClass.lowRatio,
+                                   daytime)):
+                    missingClasses.append(swimmingClass)
+                gridsWb.save(gridsFile)
+            else:
+                grid = gridsWb["Daytime"]
+                daytime = True
+
         else:
-            print("not monday")
-        gridsWb.save(gridsFile)
+            print("riperoni")
+
+    print("")
+    print("")
+    print("All missed classes:")
+    for swimClass in missingClasses:
+        print(swimClass.swimClassName + " - " + swimClass.level + " - " + swimClass.day + " - " + swimClass.activityNumber + " - " + swimClass.hour + ":" + swimClass.minute)
 
 
 def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
     letters = ["C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W",
                "X", "Y", "Z"]
 
+    missedClasses = []
     timeFound = False
     classNameFound = False
     x = 0
     classNameRow = 7
     activityNumberRow = 8
     end = False
-    print("Looking for " + level + " - " + activityNumber + " " + time + " " + str(lowRatio))
+    #print("Looking for " + level + " - " + activityNumber + " " + time + " " + str(lowRatio))
     while not timeFound or end:
         gridTimeCell = sheet[letters[x] + "6"]
-        if time == str(gridTimeCell.value):
-            print("found time")
+        if time in str(gridTimeCell.value):
+            #print("found time")
             while not classNameFound:
                 classNameValue = sheet[letters[x] + str(classNameRow)]
                 if classNameValue.value is not None:
                     if not "Lifeguarding" in str(classNameValue.value):
                         activityNumberValue = sheet[letters[x] + str(activityNumberRow)]
                         if level.replace(" ","")[:5] in str(classNameValue.value) and activityNumberValue.value is None:
-                            sheet[letters[x] + str(activityNumberRow)].value = activityNumber
-                            classNameFound = True
-                            print("found class, entering barcode")
-                            print(level + " - " + activityNumber)
+                            if lowRatio:
+                                if "LR" in str(classNameValue.value):
+                                    sheet[letters[x] + str(activityNumberRow)].value = activityNumber
+                                    classNameFound = True
+                            else:
+                                sheet[letters[x] + str(activityNumberRow)].value = activityNumber
+                                classNameFound = True
+                            print("Found class - Entering barcode for: " + level + " - " + activityNumber)
+                            return True
 
                 classNameRow += 2
                 activityNumberRow += 2
                 if classNameRow > 200 or activityNumberRow > 200:
                     print("not found class")
                     classNameFound = True
+                    return False
             timeFound = True
 
         if letters[x] == "Z" and not timeFound:
