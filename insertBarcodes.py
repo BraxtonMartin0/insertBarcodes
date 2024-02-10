@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from openpyxl import load_workbook
 
+
 def insertBarcodes(file, gridsFile):
     wb = load_workbook(file)
     data = wb['Sheet1']
@@ -10,20 +11,27 @@ def insertBarcodes(file, gridsFile):
     allClasses = []
 
     count = data.max_row
-    x=2
+    x = 2
     while x < count - 1:
         info_cell = "A" + str(x)
         allInfo = data[info_cell].value
         info = allInfo.split("-")
 
         activityNumber = info[0]
-        swimClassNameInfo = info[1].split("–")
-        swimClassName = swimClassNameInfo[0]
-        level = swimClassNameInfo[1].replace(" ","")
+        if len(info) > 2:
+            swimClassName = "PVL"
+            level = "PVL"
+        else:
+            swimClassNameInfo = info[1].split("–")
+            swimClassName = swimClassNameInfo[0]
+            level = swimClassNameInfo[1].replace(" ", "")
 
         if "|" in level:
             temp = level.split("|")
             level = temp[1]
+
+        if level == "PrivateLessons":
+            level = "PVL"
 
         if "lowratio" in level:
             lowRatio = True
@@ -38,7 +46,7 @@ def insertBarcodes(file, gridsFile):
         time_cell = "E" + str(x)
         timeTemp = data[time_cell].value.split(":")
 
-        if "PM" in  timeTemp[1]:
+        if "PM" in timeTemp[1]:
             PM = True
         else:
             PM = False
@@ -46,9 +54,10 @@ def insertBarcodes(file, gridsFile):
         hour = timeTemp[0]
         minute = timeTemp[1][:2]
 
-        print(str(x-1) + ":" + info[0] + " : " + swimClassName + " : " + level + " : " + day + " : " + str(hour) + ":" + str(minute) + ": Low Ratio: " + str(lowRatio) )
+        # print(str(x - 1) + ":" + info[0] + " : " + swimClassName + " : " + level + " : " + day + " : " + str(
+        # hour) + ":" + str(minute) + " PM: " + str(PM) + ": Low Ratio: " + str(lowRatio))
 
-        newClass = SwimClass(activityNumber,swimClassName, level, day, hour, minute, PM, lowRatio)
+        newClass = SwimClass(activityNumber, swimClassName, level, day, hour, minute, PM, lowRatio)
 
         allClasses.append(newClass)
 
@@ -58,16 +67,67 @@ def insertBarcodes(file, gridsFile):
 
     wb.save(file)
 
-    gridsWb = load_workbook(gridsFile)
-
     for swimmingClass in allClasses:
+        gridsWb = load_workbook(gridsFile)
+        if swimmingClass.PM and not int(swimmingClass.hour) == 12:
+            classTime = str(int(swimmingClass.hour) + 12) + ":" + str(swimmingClass.minute) + ":" + "00"
+        else:
+            classTime = str(swimmingClass.hour) + ":" + str(swimmingClass.minute)
         if swimmingClass.day == "M":
-            if swimmingClass.hour > 3 and swimmingClass.PM:
+            if int(swimmingClass.hour) > 3 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
                 grid = gridsWb["Monday PM"]
+                daytime = False
+                gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber, swimmingClass.lowRatio,
+                           daytime)
+
+            else:
+                grid = gridsWb["Daytime"]
+                daytime = True
+        gridsWb.save(gridsFile)
+
+
+def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
+    letters = ["C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W",
+               "X", "Y", "Z"]
+
+    timeFound = False
+    classNameFound = False
+    x = 0
+    classNameRow = 7
+    activityNumberRow = 8
+    end = False
+    print("Looking for " + level + " - " + activityNumber + " " + time + " " + str(lowRatio))
+    while not timeFound or end:
+        gridTimeCell = sheet[letters[x] + "6"]
+        if time == str(gridTimeCell.value):
+            print("found time")
+            while not classNameFound:
+                classNameValue = sheet[letters[x] + str(classNameRow)]
+                if classNameValue.value is not None:
+                    activityNumberValue = sheet[letters[x] + str(activityNumberRow)]
+                    if level in classNameValue.value and activityNumberValue.value is None:
+                        sheet[letters[x] + str(activityNumberRow)].value = activityNumber
+                        classNameFound = True
+                        print("found class, entering barcode")
+                        print(level + " - " + activityNumber)
+
+                classNameRow += 2
+                activityNumberRow += 2
+                if classNameRow > 200 or activityNumberRow > 200:
+                    print("not found class")
+                    classNameFound = True
+            timeFound = True
+
+        if letters[x] == "Z" and not timeFound:
+            print("Not Found time")
+            end = True
+        x += 1
+
+    # print(activityNumber + " - " + level)
 
 
 class SwimClass:
-    def __init__(self,activityNumber, swimClassName, level, day, hour, minute, PM, lowRatio):
+    def __init__(self, activityNumber, swimClassName, level, day, hour, minute, PM, lowRatio):
         self.activityNumber = activityNumber
         self.swimClassName = swimClassName
         self.level = level
@@ -77,6 +137,7 @@ class SwimClass:
         self.lowRatio = lowRatio
         self.PM = PM
 
+
 if __name__ == '__main__':
-    #file = sys.argv[1]
-    insertBarcodes('active_report.xlsx','2024 WBSC Grids - Winter.xlsx')
+    # file = sys.argv[1]
+    insertBarcodes('active_report.xlsx', '2024 WBSC Grids - Winter.xlsx')
