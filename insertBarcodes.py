@@ -24,22 +24,24 @@ def insertBarcodes(file, gridsFile):
         else:
             swimClassNameInfo = info[1].split("–")
             swimClassName = swimClassNameInfo[0]
-            level = swimClassNameInfo[1].replace(" ", "")
+            level = swimClassNameInfo[1]
+
 
         if "|" in level:
             temp = level.split("|")
             level = temp[1]
 
-        if level == "PrivateLessons":
+        if "Private Lesson" in level:
             level = "PVL"
 
-        if "lowratio" in level:
+        if "low ratio" in level:
             lowRatio = True
             levelTemp = level.split("(")
             level = levelTemp[0]
         else:
             lowRatio = False
 
+        print(level)
         day_cell = "D" + str(x)
         day = data[day_cell].value
 
@@ -83,6 +85,8 @@ def insertBarcodes(file, gridsFile):
             else:
                 grid = gridsWb["Daytime"]
                 daytime = True
+        else:
+            print("not monday")
         gridsWb.save(gridsFile)
 
 
@@ -104,12 +108,13 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
             while not classNameFound:
                 classNameValue = sheet[letters[x] + str(classNameRow)]
                 if classNameValue.value is not None:
-                    activityNumberValue = sheet[letters[x] + str(activityNumberRow)]
-                    if level in classNameValue.value and activityNumberValue.value is None:
-                        sheet[letters[x] + str(activityNumberRow)].value = activityNumber
-                        classNameFound = True
-                        print("found class, entering barcode")
-                        print(level + " - " + activityNumber)
+                    if not "Lifeguarding" in str(classNameValue.value):
+                        activityNumberValue = sheet[letters[x] + str(activityNumberRow)]
+                        if level.replace(" ","")[:5] in str(classNameValue.value) and activityNumberValue.value is None:
+                            sheet[letters[x] + str(activityNumberRow)].value = activityNumber
+                            classNameFound = True
+                            print("found class, entering barcode")
+                            print(level + " - " + activityNumber)
 
                 classNameRow += 2
                 activityNumberRow += 2
