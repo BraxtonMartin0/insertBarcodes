@@ -218,7 +218,6 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
                             tempLevel = level.replace("(", "").replace(")", " ").split(" ")
                             tempLevel[0].lower()
                             tempLevel[1].lower()
-                            print(tempLevel)
                             if tempLevel[0] in str(classNameValue.value).replace(" ", "").lower() and tempLevel[
                                 1] in str(classNameValue.value).replace(" ", "").lower():
                                 sheet[letters[x] + str(activityNumberRow)].value = activityNumber
