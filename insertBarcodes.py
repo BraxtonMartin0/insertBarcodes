@@ -188,7 +188,10 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
     classNameRow = 7
     activityNumberRow = 8
     end = False
-    print("Looking for " + level + " - " + activityNumber + " " + time + " " + str(lowRatio))
+    if lowRatio:
+        print("Looking for " + level + " LR - " + activityNumber + " " + time + " " + str(lowRatio))
+    else:
+        print("Looking for " + level + " - " + activityNumber + " " + time + " " + str(lowRatio))
     while not timeFound or end:
         gridTimeCell = sheet[letters[x] + "6"]
         if time in str(gridTimeCell.value):
