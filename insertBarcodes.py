@@ -1,6 +1,4 @@
 import sys
-from datetime import timedelta
-
 from openpyxl import load_workbook
 
 
@@ -26,7 +24,6 @@ def insertBarcodes(file, gridsFile):
             swimClassName = swimClassNameInfo[0]
             level = swimClassNameInfo[1]
 
-
         if "|" in level:
             temp = level.split("|")
             level = temp[1]
@@ -41,7 +38,7 @@ def insertBarcodes(file, gridsFile):
             level = tempLevel[1].replace(" ", "")
 
         if "Canadian Tire Jumpstart I Love to Swim" in level:
-            level = " I Love to Swim"
+            level = "I Love to Swim"
 
         if "women" in level.lower():
             tempLevel = level.split(" ")
@@ -54,7 +51,7 @@ def insertBarcodes(file, gridsFile):
         else:
             lowRatio = False
 
-        #print(level)
+        # print(level)
         day_cell = "D" + str(x)
         day = data[day_cell].value
 
@@ -69,16 +66,13 @@ def insertBarcodes(file, gridsFile):
         hour = timeTemp[0]
         minute = timeTemp[1][:2]
 
-        # print(str(x - 1) + ":" + info[0] + " : " + swimClassName + " : " + level + " : " + day + " : " + str(
-        # hour) + ":" + str(minute) + " PM: " + str(PM) + ": Low Ratio: " + str(lowRatio))
-
         newClass = SwimClass(activityNumber, swimClassName, level, day, hour, minute, PM, lowRatio)
 
         allClasses.append(newClass)
 
         x += 1
 
-    print(len(allClasses))
+    print("There are " + str(len(allClasses)) + " classes this session")
 
     wb.save(file)
 
@@ -96,8 +90,8 @@ def insertBarcodes(file, gridsFile):
             grid = gridsWb["Saturday AM"]
             daytime = False
             if not (gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber,
-                        swimmingClass.lowRatio,
-                        daytime)):
+                               swimmingClass.lowRatio,
+                               daytime)):
                 missingClasses.append(swimmingClass)
             gridsWb.save(gridsFile)
         elif swimmingClass.day == "Su":
@@ -174,13 +168,14 @@ def insertBarcodes(file, gridsFile):
                 daytime = True
 
         else:
-            print("riperoni")
+            print("Invalid day")
 
     print("")
     print("")
     print("All missed classes:")
     for swimClass in missingClasses:
-        print(swimClass.swimClassName + " - " + swimClass.level + " - " + swimClass.day + " - " + swimClass.activityNumber + " - " + swimClass.hour + ":" + swimClass.minute)
+        print(
+            swimClass.swimClassName + " - " + swimClass.level + " - " + swimClass.day + " - " + swimClass.activityNumber + " - " + swimClass.hour + ":" + swimClass.minute)
 
 
 def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
@@ -197,14 +192,15 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
     while not timeFound or end:
         gridTimeCell = sheet[letters[x] + "6"]
         if time in str(gridTimeCell.value):
-            #print("found time")
+            # print("found time")
             while True:
                 classNameValue = sheet[letters[x] + str(classNameRow)]
                 if classNameValue.value is not None:
                     if not "Lifeguarding" in str(classNameValue.value) or not "LG" in str(classNameValue.value):
                         activityNumberValue = sheet[letters[x] + str(activityNumberRow)]
-                        #print(level + " - " + str(classNameValue.value))
-                        if level.replace("(","").replace(")","").replace(" ","").lower() in str(classNameValue.value).replace(" ","").lower() and activityNumberValue.value is None:
+                        # print(level + " - " + str(classNameValue.value))
+                        if level.replace("(", "").replace(")", "").replace(" ", "").lower() in str(
+                                classNameValue.value).replace(" ", "").lower() and activityNumberValue.value is None:
 
                             if lowRatio:
                                 if "LR" in str(classNameValue.value):
@@ -230,12 +226,12 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
                 if classNameRow > 200 or activityNumberRow > 200:
                     print("Class not found")
                     return False
-            timeFound = True
 
         if letters[x] == "Z" and not timeFound:
             print("Not Found time")
             end = True
         x += 1
+
 
 class SwimClass:
     def __init__(self, activityNumber, swimClassName, level, day, hour, minute, PM, lowRatio):
