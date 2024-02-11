@@ -188,7 +188,7 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
             while True:
                 classNameValue = sheet[letters[x] + str(classNameRow)]
                 if classNameValue.value is not None:
-                    if not "Lifeguarding" in str(classNameValue.value):
+                    if not "Lifeguarding" in str(classNameValue.value) or not "LG" in str(classNameValue.value):
                         activityNumberValue = sheet[letters[x] + str(activityNumberRow)]
                         if level.replace(" ","")[:5] in str(classNameValue.value) and activityNumberValue.value is None:
                             if lowRatio:
