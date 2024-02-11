@@ -249,5 +249,4 @@ class SwimClass:
 
 
 if __name__ == '__main__':
-    # file = sys.argv[1]
     insertBarcodes(sys.argv[1], sys.argv[2])
