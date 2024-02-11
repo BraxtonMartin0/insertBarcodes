@@ -31,13 +31,26 @@ def insertBarcodes(file, gridsFile):
             temp = level.split("|")
             level = temp[1]
 
-        if "Private Lesson" in level:
+        if "Private Lesson" in level and not "Semi" in level:
             level = "PVL"
+        elif "Private Lesson" in level and "Semi" in level:
+            level = "Semi-PVL"
+
+        if "Little" in level:
+            tempLevel = level.split("Little")
+            level = tempLevel[1].replace(" ", "")
+
+        if "Canadian Tire Jumpstart I Love to Swim" in level:
+            level = " I Love to Swim"
+
+        if "women" in level.lower():
+            tempLevel = level.split(" ")
+            level = tempLevel[0] + " women"
 
         if "low ratio" in level:
             lowRatio = True
-            levelTemp = level.split("(")
-            level = levelTemp[0]
+            levelTemp1 = level.split("(")
+            level = levelTemp1[0]
         else:
             lowRatio = False
 
@@ -180,7 +193,7 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
     classNameRow = 7
     activityNumberRow = 8
     end = False
-    #print("Looking for " + level + " - " + activityNumber + " " + time + " " + str(lowRatio))
+    print("Looking for " + level + " - " + activityNumber + " " + time + " " + str(lowRatio))
     while not timeFound or end:
         gridTimeCell = sheet[letters[x] + "6"]
         if time in str(gridTimeCell.value):
@@ -190,19 +203,32 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
                 if classNameValue.value is not None:
                     if not "Lifeguarding" in str(classNameValue.value) or not "LG" in str(classNameValue.value):
                         activityNumberValue = sheet[letters[x] + str(activityNumberRow)]
-                        if level.replace(" ","")[:5] in str(classNameValue.value) and activityNumberValue.value is None:
+                        #print(level + " - " + str(classNameValue.value))
+                        if level.replace("(","").replace(")","").replace(" ","").lower() in str(classNameValue.value).replace(" ","").lower() and activityNumberValue.value is None:
+
                             if lowRatio:
                                 if "LR" in str(classNameValue.value):
                                     sheet[letters[x] + str(activityNumberRow)].value = activityNumber
+                                    print("Found class - Entering barcode for: " + level + " - " + activityNumber)
+                                    return True
                             else:
                                 sheet[letters[x] + str(activityNumberRow)].value = activityNumber
-                            print("Found class - Entering barcode for: " + level + " - " + activityNumber)
-                            return True
-
+                                print("Found class - Entering barcode for: " + level + " - " + activityNumber)
+                                return True
+                        elif "women" in level.lower():
+                            tempLevel = level.replace("(", "").replace(")", " ").split(" ")
+                            tempLevel[0].lower()
+                            tempLevel[1].lower()
+                            print(tempLevel)
+                            if tempLevel[0] in str(classNameValue.value).replace(" ", "").lower() and tempLevel[
+                                1] in str(classNameValue.value).replace(" ", "").lower():
+                                sheet[letters[x] + str(activityNumberRow)].value = activityNumber
+                                print("Found class - Entering barcode for: " + level + " - " + activityNumber)
+                                return True
                 classNameRow += 2
                 activityNumberRow += 2
                 if classNameRow > 200 or activityNumberRow > 200:
-                    print("not found class")
+                    print("Class not found")
                     return False
             timeFound = True
 
@@ -210,9 +236,6 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
             print("Not Found time")
             end = True
         x += 1
-
-    # print(activityNumber + " - " + level)
-
 
 class SwimClass:
     def __init__(self, activityNumber, swimClassName, level, day, hour, minute, PM, lowRatio):
@@ -228,4 +251,4 @@ class SwimClass:
 
 if __name__ == '__main__':
     # file = sys.argv[1]
-    insertBarcodes('active_report.xlsx', '2024 WBSC Grids - Winter.xlsx')
+    insertBarcodes(sys.argv[1], sys.argv[2])
