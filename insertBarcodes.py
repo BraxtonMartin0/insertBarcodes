@@ -202,6 +202,15 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
                     if not "Lifeguarding" in str(classNameValue.value) or not "LG" in str(classNameValue.value):
                         activityNumberValue = sheet[letters[x] + str(activityNumberRow)]
                         # print(level + " - " + str(classNameValue.value))
+                        if "women" in level.lower() and activityNumberValue.value is None:
+                            tempLevel = level.replace("(", "").replace(")", " ").split(" ")
+                            tempLevel[0].lower()
+                            tempLevel[1].lower()
+                            if tempLevel[0] in str(classNameValue.value).replace(" ", "").lower() and tempLevel[
+                                1] in str(classNameValue.value).replace(" ", "").lower():
+                                sheet[letters[x] + str(activityNumberRow)].value = activityNumber
+                                print("Found class - Entering barcode for: " + level + " - " + activityNumber)
+                                return True
                         if level.replace("(", "").replace(")", "").replace(" ", "").lower() in str(
                                 classNameValue.value).replace(" ", "").lower() and activityNumberValue.value is None:
 
@@ -211,15 +220,6 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
                                     print("Found class - Entering barcode for: " + level + " - " + activityNumber)
                                     return True
                             else:
-                                sheet[letters[x] + str(activityNumberRow)].value = activityNumber
-                                print("Found class - Entering barcode for: " + level + " - " + activityNumber)
-                                return True
-                        elif "women" in level.lower():
-                            tempLevel = level.replace("(", "").replace(")", " ").split(" ")
-                            tempLevel[0].lower()
-                            tempLevel[1].lower()
-                            if tempLevel[0] in str(classNameValue.value).replace(" ", "").lower() and tempLevel[
-                                1] in str(classNameValue.value).replace(" ", "").lower():
                                 sheet[letters[x] + str(activityNumberRow)].value = activityNumber
                                 print("Found class - Entering barcode for: " + level + " - " + activityNumber)
                                 return True
