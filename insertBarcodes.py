@@ -116,7 +116,7 @@ def insertBarcodes(file, gridsFile):
                 daytime = True
 
         elif swimmingClass.day == "Tu":
-            if int(swimmingClass.hour) > 3 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
+            if int(swimmingClass.hour) > 1 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
                 grid = gridsWb["Tuesday PM"]
                 daytime = False
                 if not (gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber,
@@ -129,7 +129,7 @@ def insertBarcodes(file, gridsFile):
                 daytime = True
 
         elif swimmingClass.day == "W":
-            if int(swimmingClass.hour) > 3 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
+            if int(swimmingClass.hour) > 1 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
                 grid = gridsWb["Wednesday PM"]
                 daytime = False
                 if not (gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber,
@@ -142,7 +142,7 @@ def insertBarcodes(file, gridsFile):
                 daytime = True
 
         elif swimmingClass.day == "Th":
-            if int(swimmingClass.hour) > 3 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
+            if int(swimmingClass.hour) > 1 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
                 grid = gridsWb["Thursday PM"]
                 daytime = False
                 if not (gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber,
@@ -155,7 +155,7 @@ def insertBarcodes(file, gridsFile):
                 daytime = True
 
         elif swimmingClass.day == "F":
-            if int(swimmingClass.hour) > 3 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
+            if int(swimmingClass.hour) > 1 and swimmingClass.PM and not (int(swimmingClass.hour) == 12):
                 grid = gridsWb["Friday PM"]
                 daytime = False
                 if not (gridSearch(grid, classTime, swimmingClass.level, swimmingClass.activityNumber,
@@ -210,16 +210,16 @@ def gridSearch(sheet, time, level, activityNumber, lowRatio, daytime):
                                     sheet[letters[x] + str(activityNumberRow)].value = activityNumber
                                     print("Found class - Entering barcode for: " + level + " - " + activityNumber)
                                     return True
-                            else:
+                            elif not lowRatio and "LR" not in str(classNameValue.value):
                                 sheet[letters[x] + str(activityNumberRow)].value = activityNumber
                                 print("Found class - Entering barcode for: " + level + " - " + activityNumber)
                                 return True
-                        elif "women" in level.lower():
+                        elif "women" in str(classNameValue.value).lower() and "women" in level.lower() and activityNumberValue.value is None:
                             tempLevel = level.replace("(", "").replace(")", " ").split(" ")
-                            tempLevel[0].lower()
-                            tempLevel[1].lower()
-                            if tempLevel[0] in str(classNameValue.value).replace(" ", "").lower() and tempLevel[
-                                1] in str(classNameValue.value).replace(" ", "").lower():
+                            tempLevel[0] = tempLevel[0].lower()
+                            tempLevel[1] = tempLevel[1].lower()
+                            if tempLevel[0].lower() in str(classNameValue.value).replace(" ", "").lower() and tempLevel[
+                                1].lower() in str(classNameValue.value).replace(" ", "").lower():
                                 sheet[letters[x] + str(activityNumberRow)].value = activityNumber
                                 print("Found class - Entering barcode for: " + level + " - " + activityNumber)
                                 return True
